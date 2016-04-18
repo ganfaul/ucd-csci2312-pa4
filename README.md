@@ -43,7 +43,7 @@ You don't need to submit anything. Once you fork the repository (this is your **
 
 ### Grading
 
-An autograding script will run the test suite against your files. Your grade will be based on the number of tests passed. (E.g. if your code passes 3 out of 6 test cases, your score will be 50% and the grade will be the corresponding letter grade in the course's grading scale). The test suite for PA4 has __153__ tests. **Note:** The testing and grading will be done with fresh original copies of all the provided files. In the course of development, you can modify them, if you need to, but your changes will not be used. Only your <tt>Point.cpp</tt>, <tt>Cluster.cpp</tt>, <tt>KMeans.cpp</tt>, and <tt>Exceptions.cpp</tt> files will be used.
+An autograding script will run the test suite against your files. Your grade will be based on the number of tests passed. (E.g. if your code passes 3 out of 6 test cases, your score will be 50% and the grade will be the corresponding letter grade in the course's grading scale). The test suite for PA4 has __153__ tests. **Note:** The testing and grading will be done with fresh original copies of all the provided files. In the course of development, you can modify them, if you need to, but your changes will not be used. Only your `Exceptions.cpp`, `Piece.cpp`, `Agent.cpp`, `Simple.cpp`, `Strategic.cpp`, `Resource.cpp`, `Food.cpp`, `Advantage.cpp`, `Game.cpp`, `DefaultAgentStrategy.cpp`, and `AggressiveAgentStrategy.cpp` files will be used.
 
 ### Compiler
 
@@ -59,7 +59,7 @@ Free Github repositories are public so you can look at each other's code. Please
 
 ### Use of libraries
 
-You are encouraged to make maximum use of the Standard Library especially including the Standard Template Library (STL).
+You are encouraged to make maximum use of the Standard Library, especially the Standard Template Library (STL).
 
 ### Coding style
 
@@ -339,11 +339,11 @@ unsigned int numAdvantages = __numInitResources / 4;
 unsigned int numFoods = __numInitResources - numAdvantages;
 ```
 
-The `Game` is **over** when there are _no more `Resource`-s_ left on the grid.
+The `Game` is **over** when there are _no more `Resource`-s_ left on the grid. Note that this includes the rare case when `Agent`-s are taken off the board before all `Resource`-s have been consumed. The latter will age and disappear on their own.
 
 The default `Game::Game()` constructor creates a **3 x 3** grid.
 
-##### 6.5 `Piece` position randomization
+##### 6.5 `Game` population randomization
 
 To randomize the positions of the Piece-s during automatic population, you can use code like this:
 
@@ -368,8 +368,13 @@ while (numStrategic > 0) {
 
 // Note: you can reuse the generator
 ```
+##### 6.6 `Piece` position randomization
 
-##### 6.6 RTTI & `std::dynamic_cast`
+## TODO 
+_reference `Gaming.h`
+
+
+##### 6.7 RTTI & `std::dynamic_cast`
 
 For the implementation of some functions, e.g. `Game::getNumSimple()`, you will need to know the runtime/dynamic derived type of an _upcast_ object (i.e. that is pointed to by a `Piece*` pointer). This is called _runtime type information (RTTI)_ and the following code illustrates the use of the C++ RTTI facility `std::dynamic_cast<>`:
 
@@ -381,8 +386,8 @@ unsigned int Game::getNumSimple() const {
     unsigned int numAgents = 0;
 
     for (auto it = __grid.begin(); it != __grid.end(); ++it) {
-        Agent *agent = dynamic_cast<Simple*>(*it);
-        if (agent) numAgents ++;
+        Simple *simple = dynamic_cast<Simple*>(*it);
+        if (simple) numAgents ++;
     }
 
     return numAgents;
@@ -391,7 +396,7 @@ unsigned int Game::getNumSimple() const {
 
 More on `dynamic_cast` in the [C++ Reference](http://en.cppreference.com/w/cpp/language/dynamic_cast).
 
-##### 6.7 `std::set`
+##### 6.8 `std::set`
 
 As mentioned above, `std::set` might be useful in the implementation of `Game::round()`. The following code contains a contrived example which you might find helpful:
 
@@ -458,3 +463,19 @@ In particular, notice that `std::set::insert()` does not invalidate any iterator
 _This section concerns future revisions of this assignment._
 
 1. (Section [6.3](https://github.com/ivogeorg/ucd-csci2312-pa4/blob/master/README.md#63-piece-viability-energy-capacity-aging-finishing)) `Piece::finish()` is called by any `Resource` which gets consumed or `Agent` which loses a challenge with another `Agent`. Specifically, it is called in the implementation of the double-dispatch `virtual` interaction operator `operator*()`. See next section for details on the operator. **TODO: This is a game rule, and therefore should be _pulled up_ to the abstract classes. The leaf classes should not be relied upon to implement the game rules faithfully. This will open the possibility for an open implementation of leaf classes by students and team tournaments.**
+
+2. Add tests for:
+  1. Randomization in:
+    1. Automatic game population.
+    2. Gameplay.
+  2. Rule enforcement in:
+    1. Actions.
+    2. Interaction.
+    3. Termination.
+  3. Fairness in:
+    1. Gameplay.
+  4. Exception throws.
+  
+3. Consider alternative game termination conditions.
+
+4. Explain forward class declarations used to avoid circular header includes.
